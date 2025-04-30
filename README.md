@@ -97,7 +97,7 @@ Entities are linked to devices in the Home Assistant Device Registry:
 
 ## Known Issues / Limitations
 
-* [List any known issues, e.g., specific firmware incompatibilities, unsupported features]
+* Work in progress wait for a release. v1 support expected in a couple weeks, v2 following later. 
 * Setting IP configuration parameters (Static IP, Netmask, Gateway) via Home Assistant is complex due to API differences and potential network disruption. Use the device's own interface for network setup.
 
 ## Troubleshooting
