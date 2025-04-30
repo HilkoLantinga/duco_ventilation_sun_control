@@ -2,10 +2,10 @@
   "domain": "duco_ventilation_sun_control",
   "name": "Duco Ventilation System",
   "version": "1.0.0",
-  "documentation": "https://github.com/YOUR_USERNAME/ha-duco-rewrite#readme",
-  "issue_tracker": "https://github.com/YOUR_USERNAME/ha-duco-rewrite/issues",
+  "documentation": "https://github.com/HilkoLantinga/duco_ventilation_sun_control#readme",
+  "issue_tracker": "https://github.com/HilkoLantinga/duco_ventilation_sun_control/issues",
   "codeowners": [
-    "@YOUR_USERNAME"
+    "@HilkoLantinga"
   ],
   "dependencies": [
     "http"
