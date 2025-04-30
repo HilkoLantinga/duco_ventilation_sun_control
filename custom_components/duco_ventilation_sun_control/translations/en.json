@@ -1,0 +1,507 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Connect to Duco Ventilation Unit",
+        "description": "Enter the hostname or IP address of your Duco unit.",
+        "data": {
+          "host": "[%key:common::config_flow::data::host%]"
+        }
+      },
+      "finish_v2_setup": {
+        "title": "API Key Required (API V2)",
+        "description": "The Duco unit at `{host}` uses API V2, which requires an API key for configuration changes and actions. Please enter the API key found in your Duco unit's settings.",
+        "data": {
+          "api_key": "[%key:common::config_flow::data::api_key%]"
+        }
+      },
+      "zeroconf_confirm": {
+        "title": "Duco Unit Found",
+        "description": "Found Duco unit `{name}` at `{host}` using API `{api_version}`. Do you want to add this device?"
+      },
+      "reauth_confirm": {
+        "title": "Re-authenticate Duco Unit",
+        "description": "Authentication failed for Duco unit at `{host}` (API V2). Please re-enter the API key.",
+        "data": {
+          "api_key": "[%key:common::config_flow::data::api_key%]"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Failed to connect to the Duco unit. Please check the hostname/IP address and network connection.",
+      "invalid_auth": "Invalid API key. Please check the key and try again.",
+      "unknown": "An unknown error occurred during setup.",
+      "unknown_api_version": "Could not determine the API version from the discovered device.",
+      "discovery_error": "An error occurred during discovery processing.",
+      "device_not_ready": "Device is not ready. Please check connection and try again later.",
+      "missing_unique_id": "Could not determine a unique ID (MAC or Serial) for the device. Cannot add device."
+    },
+    "abort": {
+      "already_configured": "[%key:common::config_flow::abort::already_configured_device%]",
+      "already_in_progress": "Configuration flow is already in progress.",
+      "cannot_connect": "Failed to connect to the device.",
+      "unknown_api_version": "Could not determine the API version.",
+      "unknown": "An unknown error occurred.",
+      "discovery_error": "Discovery processing error.",
+      "device_not_ready": "Device not ready.",
+      "missing_unique_id": "Could not determine a unique ID.",
+      "context_error": "Configuration flow context error. Please start again.",
+      "reauth_successful": "Re-authentication successful.",
+      "reauth_not_required_v1": "Re-authentication is not required for V1 API devices."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Duco Integration Options",
+        "description": "Configure polling intervals, timeouts, and retry behavior.",
+        "data": {
+          "scan_interval": "Polling Interval (seconds)",
+          "request_timeout": "Request Timeout (seconds)",
+          "request_retries": "Request Retries",
+          "retry_delay": "Retry Delay (seconds)",
+          "command_queue_delay": "Command Queue Delay (seconds)"
+        }
+      }
+    },
+    "error": {
+        "invalid_scan_interval": "Invalid polling interval. Must be at least 10 seconds.",
+        "invalid_timeout": "Invalid request timeout. Must be between 5 and 60 seconds.",
+        "invalid_retries": "Invalid request retries. Must be between 0 and 10.",
+        "invalid_retry_delay": "Invalid retry delay. Must be between 0.5 and 10.0 seconds.",
+        "invalid_command_delay": "Invalid command queue delay. Must be between 0.1 and 5.0 seconds."
+    }
+  },
+  "entity": {
+    "binary_sensor": {
+      "device.info.calibration.running": {
+        "name": "Calibration Running"
+      },
+      "device.info.calibration.valid": {
+        "name": "Calibration Valid"
+      },
+      "node.info.error.status": {
+        "name": "Error Status"
+      },
+      "device.info.installer_mode.active": {
+        "name": "Installer Mode Active"
+      },
+      "node.info.link.status": {
+        "name": "Link Status"
+      },
+      "node.info.show.status": {
+        "name": "Show Status"
+      },
+      "device.info.weather.present": {
+        "name": "Weather Station Present"
+      }
+    },
+    "button": {
+      "action.clear_network": {
+        "name": "Clear Network"
+      },
+      "action.reboot": {
+        "name": "Reboot Box"
+      },
+      "action.sync_time": {
+        "name": "Sync Box Time"
+      },
+      "action.overrule.clear": {
+        "name": "Clear Node Overrule"
+      },
+      "action.load_defaults": {
+        "name": "Load Node Defaults"
+      },
+      "action.reset": {
+        "name": "Reset Node"
+      },
+      "action.calibration.start": {
+        "name": "Start Calibration"
+      },
+      "action.calibration.stop": {
+        "name": "Stop Calibration"
+      }
+    },
+    "fan": {
+      "ventilation": {
+        "name": "Ventilation",
+        "state_attributes": {
+          "preset_mode": {
+            "name": "[%key:component::fan::state_attributes::preset_mode::name%]",
+            "state": {
+              "auto": "[%key:component::fan::preset_mode::auto%]",
+              "away": "Away",
+              "low_temporary": "Low (Temporary)",
+              "low_permanent": "Low (Permanent)",
+              "medium_temporary": "Medium (Temporary)",
+              "medium_permanent": "Medium (Permanent)",
+              "high_temporary": "High (Temporary)",
+              "high_permanent": "High (Permanent)",
+              "manual_override": "Manual Override"
+            }
+          }
+        }
+      }
+    },
+    "number": {
+      "config.box.fan.headcount": {
+        "name": "Config Fan Head Count"
+      },
+      "config.ip.ethernet.hostname": {
+        "name": "Config IP Hostname Number"
+      },
+      "config.box.fan.maxhighlevel": {
+        "name": "Config Fan Max High Level"
+      },
+      "config.box.modbus.address": {
+        "name": "Config Modbus Address"
+      },
+      "config.box.modbus.offset": {
+        "name": "Config Modbus Offset"
+      },
+      "config.box.modbus.parity": {
+        "name": "Config Modbus Parity"
+      },
+      "config.box.modbus.speed": {
+        "name": "Config Modbus Speed"
+      },
+      "config.box.modbus.stopbit": {
+        "name": "Config Modbus Stop Bits"
+      },
+      "config.box.nightboost.starttemp": {
+        "name": "Config NightBoost Start Temp"
+      },
+      "config.box.ventcool.maxwindspeed": {
+        "name": "Config VentCool Max Wind Speed"
+      },
+      "config.box.ventctrl.balancethresh": {
+        "name": "Config VentCtrl Balance Threshold"
+      },
+      "config.box.ventctrl.tempctrlhigh": {
+        "name": "Config VentCtrl Temp Upper Limit"
+      },
+      "config.box.ventctrl.tempctrllow": {
+        "name": "Config VentCtrl Temp Lower Limit"
+      },
+      "node.info.asso_id": {
+        "name": "Associated Node ID"
+      },
+      "config.automax": {
+        "name": "Config Auto Max Level"
+      },
+      "config.automin": {
+        "name": "Config Auto Min Level"
+      },
+      "config.capacity": {
+        "name": "Config Capacity"
+      },
+      "config.co2.setpoint": {
+        "name": "Config CO2 Setpoint"
+      },
+      "config.manual.level1": {
+        "name": "Config Manual Level 1"
+      },
+      "config.manual.level2": {
+        "name": "Config Manual Level 2"
+      },
+      "config.manual.level3": {
+        "name": "Config Manual Level 3"
+      },
+      "config.manual.timeout": {
+        "name": "Config Manual Timeout"
+      },
+      "config.rh.setpoint": {
+        "name": "Config RH Setpoint"
+      },
+      "config.sensorvisulevel": {
+        "name": "Config Sensor Visu Level"
+      },
+      "node.info.overrule_percentage": {
+        "name": "Overrule Level"
+      },
+      "node.info.parent_id": {
+        "name": "Parent Node ID"
+      }
+    },
+    "select": {
+      "action.calibration_command": {
+        "name": "Calibration Command",
+        "state": {
+          "ConfigMax": "Config Max",
+          "StartCalib": "Start Calibration",
+          "StopCalib": "Stop Calibration",
+          "VerifyHigh": "Verify High",
+          "VerifyLow": "Verify Low"
+        }
+      },
+      "config.box.nightboost.startmonth": {
+        "name": "Config NightBoost Start Month"
+      },
+      "config.box.nightboost.stopmonth": {
+        "name": "Config NightBoost Stop Month"
+      },
+      "config.box.ventcool.mode": {
+        "name": "Config VentCool Mode",
+        "state": {
+          "Automatic": "Automatic",
+          "Not Activated": "Not Activated",
+          "Time Controlled": "Time Controlled"
+        }
+      },
+      "node.info.state": {
+        "name": "Box Operating State"
+      },
+      "action.zone.set_state": {
+        "name": "Zone Operating State",
+        "state": {
+          "AUTO": "[%key:component::fan::preset_mode::auto%]",
+          "CNT1": "Timer 1",
+          "CNT2": "Timer 2",
+          "CNT3": "Timer 3",
+          "EMPT": "Away",
+          "MAN1": "Manual Low",
+          "MAN1x2": "Manual 1x2",
+          "MAN1x3": "Manual 1x3",
+          "MAN2": "Manual Medium",
+          "MAN2x2": "Manual 2x2",
+          "MAN2x3": "Manual 2x3",
+          "MAN3": "Manual High",
+          "MAN3x2": "Manual 3x2",
+          "MAN3x3": "Manual 3x3"
+        }
+      }
+    },
+    "sensor": {
+      "device.info.api_version": {
+        "name": "API Version"
+      },
+      "device.info.power.avg": {
+        "name": "Average Power"
+      },
+      "device.info.calibration.state": {
+        "name": "Calibration State"
+      },
+      "device.info.power.now": {
+        "name": "Current Power"
+      },
+      "device.info.installer_state": {
+        "name": "Installer State"
+      },
+      "device.info.ip_address": {
+        "name": "IP Address"
+      },
+      "device.info.mac": {
+        "name": "MAC Address"
+      },
+      "device.info.serial": {
+        "name": "Serial Number"
+      },
+      "device.info.sw_version": {
+        "name": "Software Version"
+      },
+      "device.info.device_time": {
+        "name": "Box Time"
+      },
+      "device.info.pressure.total": {
+        "name": "Total Pressure"
+      },
+      "device.info.uptime": {
+        "name": "Uptime"
+      },
+      "device.info.filter.remaining_time": {
+        "name": "Filter Remaining Time"
+      },
+      "device.info.temp.oda": {
+        "name": "Temperature Outside Air"
+      },
+      "device.info.temp.sup": {
+        "name": "Temperature Supply Air"
+      },
+      "device.info.temp.eta": {
+        "name": "Temperature Extract Air"
+      },
+      "device.info.temp.eha": {
+        "name": "Temperature Exhaust Air"
+      },
+      "device.info.fan.supply_speed": {
+        "name": "Supply Fan Speed"
+      },
+      "device.info.fan.exhaust_speed": {
+        "name": "Exhaust Fan Speed"
+      },
+      "device.info.fan.supply_pwm": {
+        "name": "Supply Fan PWM"
+      },
+      "device.info.fan.exhaust_pwm": {
+        "name": "Exhaust Fan PWM"
+      },
+      "node.info.actual_level": {
+        "name": "Actual Speed"
+      },
+      "node.info.co2": {
+        "name": "CO2"
+      },
+      "node.info.comm_error_code": {
+        "name": "Communication Error"
+      },
+      "node.info.countdown": {
+        "name": "Timer Countdown"
+      },
+      "node.info.device_type": {
+        "name": "Device Type"
+      },
+      "node.info.end_time": {
+        "name": "Timer End Time"
+      },
+      "node.info.error_code": {
+        "name": "Error Code"
+      },
+      "node.info.humidity": {
+        "name": "Humidity"
+      },
+      "node.info.mode": {
+        "name": "Mode"
+      },
+      "node.info.rssi": {
+        "name": "RSSI (Node to Master)"
+      },
+      "node.info.sensor_demand": {
+        "name": "Sensor Demand"
+      },
+      "node.info.serial": {
+        "name": "Node Serial Number"
+      },
+      "node.info.state": {
+        "name": "Box Operating State"
+      },
+      "node.info.sw_version": {
+        "name": "Node Software Version"
+      },
+      "node.info.target_level": {
+        "name": "Target Speed"
+      },
+      "node.info.temperature": {
+        "name": "Temperature"
+      },
+      "node.info.hop_via": {
+        "name": "RF Hop Via Node"
+      },
+      "node.info.rssi_n2h": {
+        "name": "RSSI (Node to Hop)"
+      },
+      "node.info.iaq_co2": {
+        "name": "IAQ CO2"
+      },
+      "node.info.iaq_rh": {
+        "name": "IAQ Humidity"
+      }
+    },
+    "switch": {
+      "config.box.time.autodst": {
+        "name": "Config Time Auto DST"
+      },
+      "config.box.fan.calibonman2": {
+        "name": "Config Fan Calibrate on Manual 2"
+      },
+      "config.ip.ethernet.dhcp": {
+        "name": "Config IP DHCP Enabled"
+      },
+      "config.box.fan.groundbound": {
+        "name": "Config Fan Ground Bound"
+      },
+      "config.box.nightboost.active": {
+        "name": "Config NightBoost Active"
+      },
+      "config.box.fan.pwminverted": {
+        "name": "Config Fan PWM Inverted"
+      },
+      "config.box.ventcool.active.friday": {
+        "name": "Config VentCool Friday"
+      },
+      "config.box.ventcool.active.monday": {
+        "name": "Config VentCool Monday"
+      },
+      "config.box.ventcool.active.saturday": {
+        "name": "Config VentCool Saturday"
+      },
+      "config.box.ventcool.active.sunday": {
+        "name": "Config VentCool Sunday"
+      },
+      "config.box.ventcool.active.thursday": {
+        "name": "Config VentCool Thursday"
+      },
+      "config.box.ventcool.active.tuesday": {
+        "name": "Config VentCool Tuesday"
+      },
+      "config.box.ventcool.active.wednesday": {
+        "name": "Config VentCool Wednesday"
+      },
+      "config.box.ventctrl.tempdependent": {
+        "name": "Config VentCtrl Temperature Dependent"
+      },
+      "action.installer_mode.toggle": {
+        "name": "Installer Mode"
+      },
+      "config.rh.delta": {
+        "name": "Config RH Delta"
+      },
+      "config.temp.dependent": {
+        "name": "Config Temp Dependent"
+      },
+      "action.link_mode.toggle": {
+        "name": "Node Link Mode"
+      },
+      "action.show.toggle": {
+        "name": "Node Show"
+      }
+    },
+    "text": {
+      "device.info.ip_address.gateway": {
+        "name": "IP Gateway (Info)"
+      },
+      "device.info.mqtt.brokerip": {
+        "name": "MQTT Broker IP (Info)"
+      },
+      "device.info.ip_address.netmask": {
+        "name": "IP Network Mask (Info)"
+      },
+      "device.info.ip_address.static": {
+        "name": "IP Static Address (Info)"
+      },
+      "config.box.time.timezone": {
+        "name": "Config Timezone"
+      },
+      "config.location": {
+        "name": "Node Location"
+      }
+    },
+    "time": {
+      "config.box.nightboost.starttime": {
+        "name": "Config NightBoost Start Time"
+      },
+      "config.box.nightboost.stoptime": {
+        "name": "Config NightBoost Stop Time"
+      },
+      "config.box.ventcool.starttime": {
+        "name": "Config VentCool Start Time"
+      },
+      "config.box.ventcool.stoptime": {
+        "name": "Config VentCool Stop Time"
+      }
+    }
+  },
+  "exceptions": {
+      "command_failed": {
+          "message": "Duco command failed: {error_details}"
+      },
+      "invalid_input": {
+          "message": "Invalid input provided: {error_details}"
+      },
+      "not_implemented": {
+          "message": "This feature is not implemented: {error_details}"
+      },
+      "unknown": {
+          "message": "An unknown Duco error occurred: {error_details}"
+      }
+  }
+}

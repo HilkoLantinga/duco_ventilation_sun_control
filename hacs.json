@@ -1,0 +1,6 @@
+{
+  "name": "Duco Ventilation System",
+  "homeassistant": "2025.4.2",
+  "render_readme": true,
+  "iot_class": "local_polling"
+}

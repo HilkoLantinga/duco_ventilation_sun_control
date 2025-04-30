@@ -1,0 +1,507 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Verbinden met Duco Ventilatie-unit",
+        "description": "Voer de hostnaam of het IP-adres van uw Duco-unit in.",
+        "data": {
+          "host": "Host"
+        }
+      },
+      "finish_v2_setup": {
+        "title": "API-sleutel Vereist (API V2)",
+        "description": "De Duco-unit op `{host}` gebruikt API V2, waarvoor een API-sleutel nodig is voor configuratiewijzigingen en acties. Voer de API-sleutel in die u kunt vinden in de instellingen van uw Duco-unit.",
+        "data": {
+          "api_key": "API-sleutel"
+        }
+      },
+      "zeroconf_confirm": {
+        "title": "Duco Unit Gevonden",
+        "description": "Duco unit `{name}` gevonden op `{host}` via API `{api_version}`. Wilt u dit apparaat toevoegen?"
+      },
+      "reauth_confirm": {
+        "title": "Duco Unit Herauthenticatie",
+        "description": "Authenticatie mislukt voor Duco unit op `{host}` (API V2). Voer a.u.b. de API-sleutel opnieuw in.",
+        "data": {
+          "api_key": "API-sleutel"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Kon niet verbinden met de Duco-unit. Controleer het host/IP-adres en de netwerkverbinding.",
+      "invalid_auth": "Ongeldige API-sleutel. Controleer de sleutel en probeer opnieuw.",
+      "unknown": "Er is een onbekende fout opgetreden.",
+      "unknown_api_version": "Kon de API-versie niet bepalen van het gevonden apparaat.",
+      "discovery_error": "Er is een fout opgetreden tijdens de verwerking van de detectie.",
+      "device_not_ready": "Apparaat is niet gereed. Controleer de verbinding en probeer het later opnieuw.",
+      "missing_unique_id": "Kon geen unieke ID (MAC of Serieel) voor het apparaat bepalen."
+    },
+    "abort": {
+      "already_configured": "Apparaat is al geconfigureerd.",
+      "already_in_progress": "Configuratie flow is al bezig.",
+      "cannot_connect": "Kon niet verbinden.",
+      "unknown_api_version": "Kon de API-versie niet bepalen.",
+      "unknown": "Onbekende fout.",
+      "discovery_error": "Fout bij detectieverwerking.",
+      "device_not_ready": "Apparaat niet gereed.",
+      "missing_unique_id": "Kon geen unieke ID bepalen.",
+      "context_error": "Configuratie flow context fout. Begin a.u.b. opnieuw.",
+      "reauth_successful": "Herauthenticatie succesvol.",
+      "reauth_not_required_v1": "Herauthenticatie is niet vereist voor V1 API apparaten."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Duco Integratie Opties",
+        "description": "Configureer polling intervallen, timeouts en retry gedrag.",
+        "data": {
+          "scan_interval": "Polling Interval (seconden)",
+          "request_timeout": "Verzoek Timeout (seconden)",
+          "request_retries": "Verzoek Herhalingen",
+          "retry_delay": "Herhalingsvertraging (seconden)",
+          "command_queue_delay": "Commando Wachtrij Vertraging (seconden)"
+        }
+      }
+    },
+    "error": {
+      "invalid_scan_interval": "Ongeldig polling interval. Moet minstens 10 seconden zijn.",
+      "invalid_timeout": "Ongeldige verzoek timeout. Moet tussen 5 en 60 seconden zijn.",
+      "invalid_retries": "Ongeldig aantal verzoek herhalingen. Moet tussen 0 en 10 zijn.",
+      "invalid_retry_delay": "Ongeldige herhalingsvertraging. Moet tussen 0.5 en 10.0 seconden zijn.",
+      "invalid_command_delay": "Ongeldige commando wachtrij vertraging. Moet tussen 0.1 en 5.0 seconden zijn."
+    }
+  },
+  "entity": {
+    "binary_sensor": {
+      "device.info.calibration.running": {
+        "name": "Kalibratie bezig"
+      },
+      "device.info.calibration.valid": {
+        "name": "Kalibratie geldig"
+      },
+      "node.info.error.status": {
+        "name": "Foutstatus"
+      },
+      "device.info.installer_mode.active": {
+        "name": "Installateursmodus actief"
+      },
+      "node.info.link.status": {
+        "name": "Linkstatus"
+      },
+      "node.info.show.status": {
+        "name": "Status tonen"
+      },
+      "device.info.weather.present": {
+        "name": "Weerstation aanwezig"
+      }
+    },
+    "button": {
+      "action.clear_network": {
+        "name": "Netwerk wissen"
+      },
+      "action.reboot": {
+        "name": "Box herstarten"
+      },
+      "action.sync_time": {
+        "name": "Boxtijd synchroniseren"
+      },
+      "action.overrule.clear": {
+        "name": "Node Overrule wissen"
+      },
+      "action.load_defaults": {
+        "name": "Node Standaard laden"
+      },
+      "action.reset": {
+        "name": "Node resetten"
+      },
+      "action.calibration.start": {
+        "name": "Start Kalibratie"
+      },
+      "action.calibration.stop": {
+        "name": "Stop Kalibratie"
+      }
+    },
+    "fan": {
+      "ventilation": {
+        "name": "Ventilatie",
+        "state_attributes": {
+          "preset_mode": {
+            "name": "Voorkeursstand",
+            "state": {
+              "auto": "Auto",
+              "away": "Afwezig",
+              "low_temporary": "Laag (Tijdelijk)",
+              "low_permanent": "Laag (Permanent)",
+              "medium_temporary": "Midden (Tijdelijk)",
+              "medium_permanent": "Midden (Permanent)",
+              "high_temporary": "Hoog (Tijdelijk)",
+              "high_permanent": "Hoog (Permanent)",
+              "manual_override": "Handmatig"
+            }
+          }
+        }
+      }
+    },
+    "number": {
+      "config.box.fan.headcount": {
+        "name": "Config Fan Personen"
+      },
+      "config.ip.ethernet.hostname": {
+        "name": "Config IP Hostnaam Nummer"
+      },
+      "config.box.fan.maxhighlevel": {
+        "name": "Config Fan Max Hoog Niveau"
+      },
+      "config.box.modbus.address": {
+        "name": "Config Modbus Adres"
+      },
+      "config.box.modbus.offset": {
+        "name": "Config Modbus Offset"
+      },
+      "config.box.modbus.parity": {
+        "name": "Config Modbus Pariteit"
+      },
+      "config.box.modbus.speed": {
+        "name": "Config Modbus Snelheid"
+      },
+      "config.box.modbus.stopbit": {
+        "name": "Config Modbus Stop Bits"
+      },
+      "config.box.nightboost.starttemp": {
+        "name": "Config NightBoost Start Temp"
+      },
+      "config.box.ventcool.maxwindspeed": {
+        "name": "Config VentCool Max Windsnelheid"
+      },
+      "config.box.ventctrl.balancethresh": {
+        "name": "Config VentCtrl Balansdrempel"
+      },
+      "config.box.ventctrl.tempctrlhigh": {
+        "name": "Config VentCtrl Temp Bovengrens"
+      },
+      "config.box.ventctrl.tempctrllow": {
+        "name": "Config VentCtrl Temp Ondergrens"
+      },
+      "node.info.asso_id": {
+        "name": "Geassocieerde Node ID"
+      },
+      "config.automax": {
+        "name": "Config Auto Max Niveau"
+      },
+      "config.automin": {
+        "name": "Config Auto Min Niveau"
+      },
+      "config.capacity": {
+        "name": "Config Capaciteit"
+      },
+      "config.co2.setpoint": {
+        "name": "Config CO2 Instelpunt"
+      },
+      "config.manual.level1": {
+        "name": "Config Manueel 1 Niveau"
+      },
+      "config.manual.level2": {
+        "name": "Config Manueel 2 Niveau"
+      },
+      "config.manual.level3": {
+        "name": "Config Manueel 3 Niveau"
+      },
+      "config.manual.timeout": {
+        "name": "Config Manueel Timeout"
+      },
+      "config.rh.setpoint": {
+        "name": "Config RV Instelpunt"
+      },
+      "config.sensorvisulevel": {
+        "name": "Config Sensor Visu Niveau"
+      },
+      "node.info.overrule_percentage": {
+        "name": "Overrule Niveau"
+      },
+      "node.info.parent_id": {
+        "name": "Parent Node ID"
+      }
+    },
+    "select": {
+      "action.calibration_command": {
+        "name": "Kalibratiecommando",
+        "state": {
+          "ConfigMax": "Config Max",
+          "StartCalib": "Start Kalibratie",
+          "StopCalib": "Stop Kalibratie",
+          "VerifyHigh": "Verifieer Hoog",
+          "VerifyLow": "Verifieer Laag"
+        }
+      },
+      "config.box.nightboost.startmonth": {
+        "name": "Config NightBoost Startmaand"
+      },
+      "config.box.nightboost.stopmonth": {
+        "name": "Config NightBoost Stopmaand"
+      },
+      "config.box.ventcool.mode": {
+        "name": "Config VentCool Modus",
+        "state": {
+          "Automatic": "Automatisch",
+          "Not Activated": "Niet geactiveerd",
+          "Time Controlled": "Tijdsgestuurd"
+        }
+      },
+      "node.info.state": {
+        "name": "Box Bedrijfsstatus"
+      },
+      "action.zone.set_state": {
+        "name": "Zone Bedrijfsstatus",
+        "state": {
+          "AUTO": "Auto",
+          "CNT1": "Timer 1",
+          "CNT2": "Timer 2",
+          "CNT3": "Timer 3",
+          "EMPT": "Afwezig",
+          "MAN1": "Manueel Laag",
+          "MAN1x2": "Manueel 1x2",
+          "MAN1x3": "Manueel 1x3",
+          "MAN2": "Manueel Midden",
+          "MAN2x2": "Manueel 2x2",
+          "MAN2x3": "Manueel 2x3",
+          "MAN3": "Manueel Hoog",
+          "MAN3x2": "Manueel 3x2",
+          "MAN3x3": "Manueel 3x3"
+        }
+      }
+    },
+    "sensor": {
+      "device.info.api_version": {
+        "name": "API Versie"
+      },
+      "device.info.power.avg": {
+        "name": "Gemiddeld vermogen"
+      },
+      "device.info.calibration.state": {
+        "name": "Kalibratiestatus"
+      },
+      "device.info.power.now": {
+        "name": "Huidig vermogen"
+      },
+      "device.info.installer_state": {
+        "name": "Installateurstatus"
+      },
+      "device.info.ip_address": {
+        "name": "IP-adres"
+      },
+      "device.info.mac": {
+        "name": "MAC-adres"
+      },
+      "device.info.serial": {
+        "name": "Serienummer"
+      },
+      "device.info.sw_version": {
+        "name": "Softwareversie"
+      },
+      "device.info.device_time": {
+        "name": "Boxtijd"
+      },
+      "device.info.pressure.total": {
+        "name": "Totale druk"
+      },
+      "device.info.uptime": {
+        "name": "Uptime"
+      },
+      "device.info.filter.remaining_time": {
+        "name": "Filter Resterende Tijd"
+      },
+      "device.info.temp.oda": {
+        "name": "Temperatuur Buitenlucht"
+      },
+      "device.info.temp.sup": {
+        "name": "Temperatuur Toevoerlucht"
+      },
+      "device.info.temp.eta": {
+        "name": "Temperatuur Extractielucht"
+      },
+      "device.info.temp.eha": {
+        "name": "Temperatuur Afvoerlucht"
+      },
+      "device.info.fan.supply_speed": {
+        "name": "Ventilator Snelheid Toevoer"
+      },
+      "device.info.fan.exhaust_speed": {
+        "name": "Ventilator Snelheid Afvoer"
+      },
+      "device.info.fan.supply_pwm": {
+        "name": "Ventilator PWM Toevoer"
+      },
+      "device.info.fan.exhaust_pwm": {
+        "name": "Ventilator PWM Afvoer"
+      },
+      "node.info.actual_level": {
+        "name": "Actuele snelheid"
+      },
+      "node.info.co2": {
+        "name": "CO2"
+      },
+      "node.info.comm_error_code": {
+        "name": "Communicatiefout"
+      },
+      "node.info.countdown": {
+        "name": "Timer Countdown"
+      },
+      "node.info.device_type": {
+        "name": "Apparaattype"
+      },
+      "node.info.end_time": {
+        "name": "Timer Eindtijd"
+      },
+      "node.info.error_code": {
+        "name": "Foutcode"
+      },
+      "node.info.humidity": {
+        "name": "Luchtvochtigheid"
+      },
+      "node.info.mode": {
+        "name": "Modus"
+      },
+      "node.info.rssi": {
+        "name": "RSSI (Node naar Master)"
+      },
+      "node.info.sensor_demand": {
+        "name": "Sensorvraag"
+      },
+      "node.info.serial": {
+        "name": "Node Serienummer"
+      },
+      "node.info.state": {
+        "name": "Box Bedrijfsstatus"
+      },
+      "node.info.sw_version": {
+        "name": "Node Softwareversie"
+      },
+      "node.info.target_level": {
+        "name": "Doelsnelheid"
+      },
+      "node.info.temperature": {
+        "name": "Temperatuur"
+      },
+      "node.info.hop_via": {
+        "name": "RF Hop Via Node"
+      },
+      "node.info.rssi_n2h": {
+        "name": "RSSI (Node naar Hop)"
+      },
+      "node.info.iaq_co2": {
+        "name": "IAQ CO2"
+      },
+      "node.info.iaq_rh": {
+        "name": "IAQ Luchtvochtigheid"
+      }
+    },
+    "switch": {
+      "config.box.time.autodst": {
+        "name": "Config Tijd Auto Zomertijd"
+      },
+      "config.box.fan.calibonman2": {
+        "name": "Config Fan Kalibratie op Manueel 2"
+      },
+      "config.ip.ethernet.dhcp": {
+        "name": "Config IP DHCP Ingeschakeld"
+      },
+      "config.box.fan.groundbound": {
+        "name": "Config Fan Grondgebonden"
+      },
+      "config.box.nightboost.active": {
+        "name": "Config NightBoost Actief"
+      },
+      "config.box.fan.pwminverted": {
+        "name": "Config Fan PWM Geïnverteerd"
+      },
+      "config.box.ventcool.active.friday": {
+        "name": "Config VentCool Vrijdag"
+      },
+      "config.box.ventcool.active.monday": {
+        "name": "Config VentCool Maandag"
+      },
+      "config.box.ventcool.active.saturday": {
+        "name": "Config VentCool Zaterdag"
+      },
+      "config.box.ventcool.active.sunday": {
+        "name": "Config VentCool Zondag"
+      },
+      "config.box.ventcool.active.thursday": {
+        "name": "Config VentCool Donderdag"
+      },
+      "config.box.ventcool.active.tuesday": {
+        "name": "Config VentCool Dinsdag"
+      },
+      "config.box.ventcool.active.wednesday": {
+        "name": "Config VentCool Woensdag"
+      },
+      "config.box.ventctrl.tempdependent": {
+        "name": "Config VentCtrl Temperatuurafhankelijk"
+      },
+      "action.installer_mode.toggle": {
+        "name": "Installateursmodus"
+      },
+      "config.rh.delta": {
+        "name": "Config RV Delta"
+      },
+      "config.temp.dependent": {
+        "name": "Config Temp Afhankelijk"
+      },
+      "action.link_mode.toggle": {
+        "name": "Node Linkmodus"
+      },
+      "action.show.toggle": {
+        "name": "Node Tonen"
+      }
+    },
+    "text": {
+      "device.info.ip_address.gateway": {
+        "name": "IP Gateway (Info)"
+      },
+      "device.info.mqtt.brokerip": {
+        "name": "MQTT Broker IP (Info)"
+      },
+      "device.info.ip_address.netmask": {
+        "name": "IP Netwerkmasker (Info)"
+      },
+      "device.info.ip_address.static": {
+        "name": "IP Statisch Adres (Info)"
+      },
+      "config.box.time.timezone": {
+        "name": "Config Tijdzone"
+      },
+      "config.location": {
+        "name": "Node Locatie"
+      }
+    },
+    "time": {
+      "config.box.nightboost.starttime": {
+        "name": "Config NightBoost Starttijd"
+      },
+      "config.box.nightboost.stoptime": {
+        "name": "Config NightBoost Stoptijd"
+      },
+      "config.box.ventcool.starttime": {
+        "name": "Config VentCool Starttijd"
+      },
+      "config.box.ventcool.stoptime": {
+        "name": "Config VentCool Stoptijd"
+      }
+    }
+  },
+  "exceptions": {
+    "command_failed": {
+      "message": "Duco commando mislukt: {error_details}"
+    },
+    "invalid_input": {
+      "message": "Ongeldige invoer: {error_details}"
+    },
+    "not_implemented": {
+      "message": "Deze functie is niet geïmplementeerd: {error_details}"
+    },
+    "unknown": {
+      "message": "Een onbekende Duco fout is opgetreden: {error_details}"
+    }
+  }
+}

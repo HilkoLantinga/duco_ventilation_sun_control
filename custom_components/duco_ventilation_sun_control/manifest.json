@@ -1,0 +1,43 @@
+{
+  "domain": "duco_ventilation_sun_control",
+  "name": "Duco Ventilation System",
+  "version": "1.0.0",
+  "documentation": "https://github.com/YOUR_USERNAME/ha-duco-rewrite#readme",
+  "issue_tracker": "https://github.com/YOUR_USERNAME/ha-duco-rewrite/issues",
+  "codeowners": [
+    "@YOUR_USERNAME"
+  ],
+  "dependencies": [
+    "http"
+  ],
+  "zeroconf": [
+    {
+      "type": "_http._tcp.local.",
+      "name": "duco*"
+    },
+    {
+      "type": "_https._tcp.local.",
+      "name": "duco*"
+    }
+  ],
+  "config_flow": true,
+  "options_flow": true,
+  "iot_class": "local_polling",
+  "loggers": [
+    "duco_api"
+  ],
+  "after_dependencies": [],
+  "integration_type": "device",
+  "platforms": [
+    "binary_sensor",
+    "button",
+    "fan",
+    "number",
+    "select",
+    "sensor",
+    "switch",
+    "text",
+    "time"
+  ],
+  "quality_scale": "platinum"
+}
