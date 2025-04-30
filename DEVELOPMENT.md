@@ -42,15 +42,15 @@ A core principle of this integration (especially for Platinum quality) is the se
 
 1.  **Clone the Repository:**
     ```bash
-    git clone https://github.com/YOUR_USERNAME/ha-duco-rewrite.git
+    git clone https://github.com/HilkoLantinga/duco_ventilation_sun_control.git
     cd ha-duco-rewrite
     ```
 2.  **Set up a Home Assistant Development Environment:** Follow the official [Developer Setup guide](https://developers.home-assistant.io/docs/development_setup). Using Docker or Python venv is recommended.
 3.  **Link the Custom Component:** Create a symbolic link from your Home Assistant configuration's `custom_components` directory to the `custom_components/duco_ventilation_sun_control` directory within your cloned repository.
     ```bash
     # Example assuming HA config is in ~/homeassistant/config
-    # and repo cloned in ~/dev/ha-duco-rewrite
-    ln -s ~/dev/ha-duco-rewrite/custom_components/duco_ventilation_sun_control ~/homeassistant/config/custom_components/duco_ventilation_sun_control
+    # and repo cloned in ~/dev/duco_ventilation_sun_control
+    ln -s ~/dev/duco_ventilation_sun_control/custom_components/duco_ventilation_sun_control ~/homeassistant/config/custom_components/duco_ventilation_sun_control
     ```
 4.  **Install Development Dependencies:** If using a venv, activate it and install requirements (if any specific dev requirements are added later). For now, the main requirement (`duco-api`) is handled by HA loading the component.
 5.  **Restart Home Assistant:** Allow HA to pick up the linked custom component.
