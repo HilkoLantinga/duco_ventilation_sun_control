@@ -10,6 +10,8 @@
 
 **Connect your Duco Ventilation System (DucoBox Silent Connect / DucoBox Focus) to Home Assistant.**
 
+!!!Work in progress, please wait for a release. v1 support expected in a couple weeks, v2 following later. !!!
+
 _Component built using the [Home Assistant Blueprint][blueprint]._
 
 **This component will set up the following platforms:**
@@ -97,7 +99,7 @@ Entities are linked to devices in the Home Assistant Device Registry:
 
 ## Known Issues / Limitations
 
-* Work in progress wait for a release. v1 support expected in a couple weeks, v2 following later. 
+* Work in progress, please wait for a release. v1 support expected in a couple weeks, v2 following later. 
 * Setting IP configuration parameters (Static IP, Netmask, Gateway) via Home Assistant is complex due to API differences and potential network disruption. Use the device's own interface for network setup.
 
 ## Troubleshooting
